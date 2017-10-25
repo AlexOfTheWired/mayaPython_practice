@@ -1,5 +1,6 @@
 import maya.cmds as mc
 
+
 def attach_loc_to_curve(prefix, loc_num):
     """This function creates Locators and attaches 
     them to a curve with a uniform distance between each Locator"""
@@ -8,10 +9,10 @@ def attach_loc_to_curve(prefix, loc_num):
     
     curve_selection = []        
     uNum = 1.0/(loc_num-1)
-    uMin = 0.0
+    u_value_pos = 0.0
+    
     for loc in range(loc_num):
-        uMin += uNum
-        print(uMin)
+        print(u_value_pos)
         lIdx = '%s' % (loc+1) 
         loc_name = mc.spaceLocator(n=(prefix + "_loc_" + lIdx))
         curve_selection.append(loc_name)
@@ -29,23 +30,14 @@ def attach_loc_to_curve(prefix, loc_num):
                                     )
         animCurvTL = mc.listConnections(mo_path + '.uValue')[0]
         mc.delete(animCurvTL)
-        mc.setAttr(mo_path + '.uValue', uMin)
+        mc.setAttr(mo_path + '.uValue', u_value_pos)
+        u_value_pos += uNum
+        mc.cycleCheck(e=False)
+        offset_jnt = mc.joint(n=(prefix + '_offsetJnt_' + lIdx), r=0.25)
+        control_jnt = mc.joint(n=(prefix + '_controlJnt_' + lIdx), r=0.25)
+        control_obj = mc.sphere(n=(prefix + '_control_' + lIdx), r=0.25)
+        mc.parent(control_obj, loc_name, s=True, r=True)
+        mc.parentConstraint(control_obj, control_jnt,  weight=1)
         
-
-
-# Create a control group for every locator ===> mc.createNode()
-
-# For every control group create a main joint and an offset joint ====> mc.joint()
-
-# for every offset Joint create a Control Object ===> (NURBS Circle, Nurbs Sphere, etc...)
-
-
         
-#animCurvTL = mc.listConnections(MoPath + '.uValue')[0]
-#mc.disconnectAttr(animCurvTL + '.output', theMoPath + '.uValue')
-#mc.delete(animCurvTL)
-    
-    
-attach_loc_to_curve('test', 5)
-
-mc.pathAnimation()
+attach_loc_to_curve('l_brow_curve', 3)
