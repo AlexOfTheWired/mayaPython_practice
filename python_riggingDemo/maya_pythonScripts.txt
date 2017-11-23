@@ -1,0 +1,75 @@
+"jointCurveSetup_v2.py":
+
+ 	This is a script that automates the process
+ of creating joints for a joint based facial rig. This script easily
+ does an hours worth of work in minutes. 
+
+	The user needs to have curves created and in place before
+ using this tool. The user must also have a curve selected when 
+ executing this script.Instead of having to individually name each 
+ joint after creation the script automatically names each joint accordingly 
+ during the actual joint creation process. 
+	
+	Demonstrated Skills:
+		- Creating functions to Automate repetative tasks.
+		- Solid understanding of For Loops.
+		- great understanding of joint based rigging. 
+
+
+
+
+
+"realTime_duplicator.py":
+
+	This tool is my version of maya's special transfrom tool.
+I have added the feature of seeing the duplication process in real
+time, instead of only seeing the duplication result after the click
+of the "Apply" button. This tool also features a GUI.The user needs
+to have the object selected before executing this tool.
+
+	Demonstrated skills:
+		- Effecient object manipluation with List Comprehension.
+		- Creating GUI(Graphic User Interface) wrapper for my scripts.
+
+
+
+
+
+"StretchyIKSpline.py":
+
+	For the rigging process, creating a stretchy Ik Spline can be tedious.
+This tool takes a selected curve and creates the Joints, Multi/Divide nodes, and an Ik handle.
+it also names the joints accordingly in less than a second.
+
+	Demonstrated Skills:
+		- Creating functions to Automate repetative tasks.
+		- woking with String Formatting to increase code modularity.
+		- ability to set up difficult IK joint chains.
+
+
+
+
+
+"StrectchyIKSpline_GUI.py":
+	
+	This is just a simple GUI wrapper for "strechyIKSpline.py". It features a spine box
+allowing you to select the number of joint, and button to execute the setup command.
+
+	Demonstrated Skills:
+		- Creating and importing custom modules.
+		- Working with classes.
+		
+
+
+
+
+"vertexParticle.py":
+
+	I made this Maya plugin using Maya Python API. This plugin is used for more memory
+intensive processes. It takes a selected object and creates a particle system. The partical
+system can be used used to create many special effects based on the meshes shape. 
+
+	Demonstrated Skills:
+		- solid understanding of Maya Python API.
+		- patients 
+		- hours of debugging experience
