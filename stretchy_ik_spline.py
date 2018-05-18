@@ -1,25 +1,26 @@
+
 import maya.cmds as mc
 
-def createStretchyIkSpine(s_curve, jnt_num):
+def createStretchyIkSpine(s_curve=mc.ls(sl=True), jnt_num=3):
     """
     Creates a stretchy Ik Spine from a selected or specified curve.
     """    
+    if not s_curve:
+        mc.error('No curve specified or selected')
+    else:
+        s_curve = s_curve[0]
+    if jnt_num < 2:
+        mc.error('Must have at least two joints')
     
-    if s_curve =='':
-        s_curve = mc.ls(sl=True)[0]
-        
     jnt_list = []
     
     mc.select(cl=True)
     
     for i in range(jnt_num):
         s_idx  = '%s' % (i+1)
-        strJnt = mc.joint(n=s_curve + '_jnt_' + s_idx)
+        strJnt = mc.joint(n='%s_jnt_%s'%(s_curve,s_idx))
         jnt_list.append(strJnt)
     
-    # This probably isn't needed.    
-    #for jnt in jnt_list:
-    #    mc.setAttr('%s.preferredAngleZ' % (jnt), -20.0)
         
     s_curveIk = mc.ikHandle(
                             sj=jnt_list[0], 
@@ -34,21 +35,19 @@ def createStretchyIkSpine(s_curve, jnt_num):
     
     g_arclen     = mc.arclen(s_curve)
     g_average    = g_arclen/(jnt_num-1) 
-    s_curve_node = mc.createNode('curveInfo', n=s_curve + '_curveInfo')
-    s_multi_node = mc.createNode('multiplyDivide', n=s_curve + '_divide')
+    s_curve_node = mc.createNode('curveInfo', n='%s_curveInfo' % (s_curve))
+    s_multi_node = mc.createNode('multiplyDivide', n='%s_divide' % (s_curve))
 
-    mc.setAttr(s_multi_node + '.operation', 2)
-    mc.setAttr(s_multi_node + '.input2X', g_arclen)
+    mc.setAttr( '%s.operation'%(s_multi_node), 2)
+    mc.setAttr( '%s.input2X'%(s_multi_node), g_arclen)
     
-    mc.connectAttr(s_curve_node + '.arcLength', s_multi_node + '.input1X')
+    mc.connectAttr( '%s.arcLength'%(s_curve_node), '%s.input1X'%(s_multi_node))
     
-    mc.connectAttr(s_curve + 'Shape.worldSpace', s_curve_node + '.inputCurve')
+    mc.connectAttr('%sShape.worldSpace'%(s_curve), '%s.inputCurve'%(s_curve_node))
     
     for i in range(jnt_num):
         if i > 0:
-            mc.setAttr(jnt_list[i] + '.tx', g_average)
+            mc.setAttr('%s.tx'%(jnt_list[i]), g_average)
             
     for jnt in jnt_list:
-        mc.connectAttr(s_multi_node + '.outputX', jnt + '.scaleX')
-        
-    # Hello, Nick
+        mc.connectAttr('%s.outputX'%(s_multi_node), '%s.scaleX'%(jnt))
