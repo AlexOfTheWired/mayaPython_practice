@@ -26,7 +26,7 @@ class TwistDispersionNode(OpenMayaMPx.MPxNode):
 		OpenMayaMPx.MPxNode.__init__(self)
 
 	def compute(self, plug, dataBlock):
-		if plug != TwistDispersionNode.negativeTwist and plug != TwistDispersionNode.disperseTwist:
+		if plug == TwistDispersionNode.negativeTwist or TwistDispersionNode.disperseTwist:
 		
 			# Get Node Input Attributes
 			try:
@@ -56,7 +56,7 @@ class TwistDispersionNode(OpenMayaMPx.MPxNode):
 			jointNumber_value = input_dataHandle2.asFloat()
 
 			# Compute negative twist
-			result1 = (inputTwist_value * (-1))
+			result1 = (inputTwist_value / (-1))
 
 			# Compute disperse twist
 			result2 = (inputTwist_value / jointNumber_value)
