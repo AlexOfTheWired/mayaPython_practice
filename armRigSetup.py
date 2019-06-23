@@ -198,7 +198,7 @@ def ik_arm_setup(prefix,side):
     mc.xform(ik_arm_group,ro=[0,0,0],os=True)
     mc.parent(ik_arm_group,w=True)
     mc.parent(ik_arm_joint_list[0],ik_arm_group)
-    
+
     # create ik solvers for arm
     arm_ik_handle = mc.ikHandle(
                                 n='%s_%s_arm_ikHandle_01'%(prefix, side),
@@ -220,14 +220,18 @@ def ik_arm_setup(prefix,side):
     mc.makeIdentity(elbow_controller,a=True,pn=True)
     mc.parent(ik_elbow_loc,elbow_controller)
     
+    arm_ik_offset = mc.group(n='%s_%s_arm_ik_offset_01'%(prefix,side),em=True)
     arm_ik_controller = create_arm_ik_control(prefix,side,curve_radius=5) 
-    mc.parentConstraint(ik_arm_joint_list[2],arm_ik_controller)
-    mc.parentConstraint(ik_arm_joint_list[2],arm_ik_controller,e=True,rm=True)
-    mc.makeIdentity(arm_ik_controller,a=True,pn=True)
+    mc.parent(arm_ik_controller,arm_ik_offset)
+    mc.pointConstraint(ik_arm_joint_list[2],arm_ik_offset)
+    mc.pointConstraint(ik_arm_joint_list[2],arm_ik_offset,e=True,rm=True)
+    mc.orientConstraint(ik_arm_joint_list[2],arm_ik_offset)
+    mc.orientConstraint(ik_arm_joint_list[2],arm_ik_offset,e=True,rm=True)
+    #mc.makeIdentity(arm_ik_offset,a=True,pn=True)
     mc.parent(arm_ik_handle,arm_ik_controller)
     mc.pointConstraint(arm_ik_controller,elbow_controller,mo=True)
     mc.orientConstraint(arm_ik_controller,ik_arm_joint_list[2],mo=True)
-            
+
     return selection_list,ik_arm_joint_list
 
     
@@ -396,7 +400,8 @@ def setup_fk_ik_blend(prefix,side,fk_arm,ik_arm,bind_arm,ctrl_scale):
     hand_offset = mc.group(n='%s_%s_hand_offset_01'%(prefix,side),em=True)
     hand_ctrl = create_hand_control(prefix,side,ctrl_scale)
     mc.parent(hand_ctrl,hand_offset)
-    mc.parent(hand_offset,fk_arm[-1])
+    mc.parent(hand_offset,fk_arm[-2])
+    print(fk_arm)
     mc.xform(hand_offset,t=[0,0,0],os=True,wd=True)
     
     if side == 'L':
@@ -549,7 +554,7 @@ def connect_arm_rig(bind_arm,fk_arm,ik_arm,twist_arm,prefix,side):
     hierachy_ctrl_group = '%s_controls_grp_01'%(prefix)
     fk_ctrl_grp = '%s_%s_shoulder_offset_01'%(prefix,side)
     ik_elbow_ctrl = '%s_%s_elbow_ik_ctrl_01'%(prefix,side)
-    ik_arm_ctrl = '%s_%s_arm_ik_ctrl_01'%(prefix,side)
+    ik_arm_offset = '%s_%s_arm_ik_offset_01'%(prefix,side)
     hand_ctrl = '%s_%s_hand_offset_01'%(prefix,side)
     
         
@@ -567,7 +572,7 @@ def connect_arm_rig(bind_arm,fk_arm,ik_arm,twist_arm,prefix,side):
     
     mc.parent(fk_ctrl_grp,hierachy_ctrl_group)
     mc.parent(ik_elbow_ctrl,hierachy_ctrl_group)    
-    mc.parent(ik_arm_ctrl,hierachy_ctrl_group)
+    mc.parent(ik_arm_offset,hierachy_ctrl_group)
     mc.parent(hand_ctrl,hierachy_ctrl_group)    
     
     mc.pointConstraint(clavicle_jnt, bind_arm)
@@ -590,3 +595,6 @@ def build_arm_rig(prefix='Test',side='L',twist=True,rig_scale=1.0):
         ik_arm_rig = ik_arm_setup(prefix,side)
         fk_arm_rig = fk_arm_setup(prefix,side,root_jnt=ik_arm_rig[0])
         setup_fk_ik_blend(prefix,side,fk_arm_rig,ik_arm_rig[1],ik_arm_rig,rig_scale)
+
+
+build_arm_rig(prefix='EightBall',side='R',twist=True,rig_scale=1.0)
