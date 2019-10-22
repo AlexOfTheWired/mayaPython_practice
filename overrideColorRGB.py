@@ -8,6 +8,11 @@ def overrideColorTool(R=0.0,G=0.0,B=0.0):
     # Assign selected objects to list
     selection_list = mc.ls(sl=True)
     
+    # Create Color Ramp texture file
+    color_ramp = mc.shadingNode('ramp', asTexture=True)
+    mc.setAttr('%s.colorEntryList[0].color'%(color_ramp), R, G, B)
+    mc.setAttr('%s.colorEntryList[1].color'%(color_ramp), R, G, B)
+    
     for loc in xrange(len(selection_list)):
         # Get list of shape nodes for each item in selection_list.
         
@@ -30,6 +35,16 @@ def overrideColorTool(R=0.0,G=0.0,B=0.0):
                 mc.setAttr('%s.overrideEnabled'%(shape_node), True)
                 mc.setAttr('%s.overrideRGBColors'%(shape_node), True)
                 mc.setAttr('%s.overrideColorRGB'%(shape_node), R, G, B)
+                mc.setAttr('%s.aiRenderCurve'%(shape_node), True)
+                # Sets Curves as renderable in Arnold.
+                mc.setAttr('%s.aiRenderCurve'%(shape_node), True)
+                mc.setAttr('%s.aiSampleRate'%(shape_node), 20)
+                mc.setAttr('%s.aiCurveWidth'%(shape_node), 0.5)
+                mc.setAttr('%s.aiMode'%(shape_node), 1)
+                mc.connectAttr('%s.outColor'%(color_ramp),'%s.aiCurveShader'%(shape_node))
+#connectAttr -force ramp1.outColor Siam_M_root_ctrl_shape2.aiCurveShader                
+
+                
             except:
                 mc.error('More that one object shares a name. Each Shape Node must have unique name.')
 
